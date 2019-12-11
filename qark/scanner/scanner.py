@@ -17,6 +17,7 @@ log = logging.getLogger(__name__)
 
 PLUGIN_CATEGORIES = ("manifest", "broadcast", "file", "crypto", "intent", "cert", "webview", "generic")
 
+IGNORE_FILES = ["/android/support/", "/android/arch/", "/com/google/", "/com/facebook/"]
 
 class Scanner(object):
 
@@ -97,7 +98,16 @@ class Scanner(object):
         try:
             for (dir_path, _, file_names) in walk(self.path_to_source):
                 for file_name in file_names:
-                    self.files.add(path.join(dir_path, file_name))
+                    fullPath = path.join(dir_path, file_name)
+                    notIgnored = True
+                    for j in IGNORE_FILES:
+                        if fullPath.find(j) > -1:
+                            notIgnored = False
+                            break
+                    if notIgnored:
+                        self.files.add(fullPath)
+                    else:
+                        log.debug("ignore: " + fullPath)
         except AttributeError:
             log.debug("Decompiler does not have a build directory")
 
