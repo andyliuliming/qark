@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 PLUGIN_CATEGORIES = ("manifest", "broadcast", "file", "crypto", "intent", "cert", "webview", "generic")
 
-IGNORE_FILES = ["/android/support/", "/android/arch/", "/com/google/", "/com/facebook/", "/com/applovin/"]
+IGNORE_FILES = ["/android/support/", "/android/arch/", "/com/google/", "/com/facebook/", "/com/applovin/", "/com/erasuper/"]
 
 class Scanner(object):
 
