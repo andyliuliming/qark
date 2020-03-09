@@ -1,9 +1,11 @@
 from __future__ import absolute_import
 
 import logging
+
 from os import (
     walk,
-    path
+    path,
+    stat
 )
 
 from qark.scanner.plugin import CoroutinePlugin
@@ -16,7 +18,6 @@ from qark.utils import is_java_file
 log = logging.getLogger(__name__)
 
 PLUGIN_CATEGORIES = ("manifest", "broadcast", "file", "crypto", "intent", "cert", "webview", "generic")
-
 IGNORE_FILES = [
     "/android/support/",
     "/android/arch/",
@@ -26,13 +27,36 @@ IGNORE_FILES = [
     "/com/erasuper/",
     "/com/baidu/",
     "/com/crashlytics/",
+    "/com/github/",
+    "/com/alibaba/fastjson/",
+    "/com/alibaba/idst/",
+    "/com/reactnativecommunity/",
+    "/com/horcrux/",
+    "/javax/annotation/",
     "/cn/jpush/",
     "/cn/jiguang/",
     "/okhttp3/",
+    "/okhttp/",
+    "/okhttp2/",
     "/io/realm/",
     "/org/spongycastle/",
+    "/ezvcard/",
+    ".so",
+    ".dex",
+    ".jar",
+    ".otf",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".wav",
+    ".aac",
+    ".mp3",
+    ".mp4",
+    ".ogg",
 ]
-
+textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
+def is_binary_string(bytes): 
+    return bool(bytes.translate(None, textchars))
 class Scanner(object):
 
     def __init__(self, manifest_path, path_to_source):
@@ -117,11 +141,16 @@ class Scanner(object):
                     for j in IGNORE_FILES:
                         if fullPath.find(j) > -1:
                             notIgnored = False
+                            log.debug("ignore: " + fullPath)
                             break
                     if notIgnored:
+                        st = stat(fullPath)
+                        if st.st_size > 0.2 * 1024 * 1024:
+                            if is_binary_string(open(fullPath, 'rb').read(1024)):
+                                notIgnored = False
+                                log.debug("ignore binary: " + fullPath)
+                    if notIgnored:
                         self.files.add(fullPath)
-                    else:
-                        log.debug("ignore: " + fullPath)
         except AttributeError:
             log.debug("Decompiler does not have a build directory")
 
