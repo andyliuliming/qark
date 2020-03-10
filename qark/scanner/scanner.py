@@ -45,7 +45,11 @@ IGNORE_FILES = [
     ".dex",
     ".jar",
     ".otf",
+    ".ttf",
+    ".db",
     ".png",
+    ".webp",
+    ".gif",
     ".jpg",
     ".jpeg",
     ".wav",
@@ -53,6 +57,7 @@ IGNORE_FILES = [
     ".mp3",
     ".mp4",
     ".ogg",
+    ".pcm",
 ]
 textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
 def is_binary_string(bytes): 
@@ -139,7 +144,7 @@ class Scanner(object):
                     fullPath = path.join(dir_path, file_name)
                     notIgnored = True
                     for j in IGNORE_FILES:
-                        if fullPath.find(j) > -1:
+                        if fullPath.lower().find(j.lower()) > -1:
                             notIgnored = False
                             log.debug("ignore: " + fullPath)
                             break
