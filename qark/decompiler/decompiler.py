@@ -290,8 +290,11 @@ def unpack_fernflower_jar(build_directory, jar_name):
     command = ["jar", "xf", jar_name]
 
     try:
-        os.chdir(os.path.join(build_directory, "fernflower"))
-        retcode = subprocess.call(command)
+        if os.path.exists(os.path.join(build_directory, "fernflower")):
+            os.chdir(os.path.join(build_directory, "fernflower"))
+            retcode = subprocess.call(command)
+        else:
+            retcode = 0
     except Exception:
         log.exception("Failed to extract fernflower jar with command '%s'", " ".join(command))
     else:
