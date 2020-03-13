@@ -227,7 +227,13 @@ def unzip_file(file_to_unzip, destination_to_unzip="unzip_apk"):
         zipped_apk = zipfile.ZipFile(file_to_unzip, "r")
         zipped_apk.extractall(path=destination_to_unzip)
     except Exception:
-        log.exception("Failed to extract zipped APK from %s to %s", file_to_unzip, destination_to_unzip)
+        log.exception("Failed to extract zipped APK from %s to %s, try system unzip", file_to_unzip, destination_to_unzip)
+        unzip_cmd = "unzip " + file_to_unzip + " -d " + destination_to_unzip
+        unzip_cmd_ret = os.system(unzip_cmd)
+        log.info("run " + unzip_cmd + ": " + str(unzip_cmd_ret))
+        if unzip_cmd_ret == 0:
+            log.info("unzip succeed")
+            return
         raise SystemExit("Failed to extract zipped APK")
 
 
