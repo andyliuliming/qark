@@ -183,7 +183,7 @@ class JavaASTPlugin(FileContentsPlugin):
             if self.file_contents:
                 try:
                     JavaASTPlugin.java_ast = javalang.parse.parse(self.file_contents)
-                except (javalang.parser.JavaSyntaxError, IndexError):
+                except (javalang.parser.JavaSyntaxError, IndexError, javalang.tokenizer.LexerError):
                     log.debug("Unable to parse AST for file %s", self.file_path)
                     JavaASTPlugin.java_ast = None
                     JavaASTPlugin.parseable = False
